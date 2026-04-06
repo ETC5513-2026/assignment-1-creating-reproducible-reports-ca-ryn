@@ -17,6 +17,8 @@ knitr::opts_chunk$set(echo = TRUE, eval = TRUE, warning = FALSE, message = FALSE
 ```
 
 ```{r}
+#| echo: false
+
 library(tidyverse)
 library(lubridate)
 library(ggplot2)
@@ -43,6 +45,8 @@ Data cleaning involved includes the following:
 - 'notes' column was presumed as irrelevant for analysis, as it does not provide relevant information on marketing spend or customer purchasing behaviour, so it was removed from the dataset.
 
 ```{r}
+#| echo: false
+
 data <- read.csv("data/37094378_Caryn Kesuma.csv")
 
 data_cleaned <- data %>% 
@@ -68,7 +72,8 @@ The cleaned dataset contains `r nrow(data_cleaned)` observations and `r ncol(dat
 
 ggplot(data_cleaned, aes(x = marketing_spend)) +
     geom_histogram(bins = 20) + 
-    labs(title =  "Distribution of Marketing Spend", x = "Marketing Spend", y = "Count")
+    labs(title =  "Distribution of Marketing Spend", 
+         x = "Marketing Spend", y = "Count")
 ```
 The distribution of marketing spend is shown in @fig-histogram where spending appears relatively evenly spread across a wide range, indicating that customers were targeted with varying levels of marketing investment. This variety provides a fair basis for analysing how differences in marketing spend relate to purchasing behaviour.
 
@@ -85,26 +90,17 @@ data_cleaned %>% summarise(
 ```
 Summary statistics in @tbl-summarystats show that the average marketing spend per customer was \$`r round(mean(data_cleaned$marketing_spend), 2)` while the average purchase amount was \$`r round(mean(data_cleaned$purchase_amount), 2)`. Customers made an average of `r round(mean(data_cleaned$visits), 2)` visits. These values suggest moderate engagement and spending levels across the dataset, providing useful context for examining the relationship between marketing investment and customer purchases.
 
-```{r}
-#| label: tbl-summarytable
-#| tbl-cap: Summary of the cleaned dataset
-
-kable(head(data_cleaned))
-```
-
 ## Results
 ### Scatter Plot
 ```{r}
 #| label: fig-scatterplot
 #| fig-cap: "The relationship between marketing spend and purchase amount."
+
 ggplot(data_cleaned, aes(x = marketing_spend, y = purchase_amount)) +
     geom_point(alpha = 0.6) +
     geom_smooth(method = "lm", se = FALSE) +
-    labs(
-        title = "Marketing Spend vs Purchase Amount",
-        x = "Marketing Spend", 
-        y = "Purchase Amount"
-    )
+    labs(title = "Marketing Spend vs Purchase Amount",
+        x = "Marketing Spend", y = "Purchase Amount")
 ```
 @fig-scatterplot shows the relationship between marketing spend and purchasing amount. There is a clear positive trend, where higher marketing spend is associated with higher purchase amounts. This is supported by a strong positive correlation of approximately `r round(cor(data_cleaned$marketing_spend, data_cleaned$purchase_amount), 2)` indicating a strong positive linear relationship between the two variables. On average, a one-unit increase in marketing spend is associated with an increase of approximately $`r round(coef(lm(purchase_amount ~ marketing_spend, data = data_cleaned))[2], 2)` in purchase amount.
 
@@ -116,11 +112,8 @@ The fitted regression line further strengthens this trend, showing the increases
 #| fig-cap: "The purchase distribution across the three segments (consumer, enterprise, small business)"
 ggplot(data_cleaned, aes(x = segment, y = purchase_amount)) +
     geom_boxplot() +
-    labs(
-        title = "Purchase Amount by Customer Segment",
-        x = "Segment",
-        y = "Purchase Amount"
-    )
+    labs(title = "Purchase Amount by Customer Segment",
+        x = "Segment", y = "Purchase Amount")
 ```
 @fig-boxplot shows the distribution of purchase amounts across different customer segments. While there are some differences in median purchase values between segments, all groups exhibit a wide range of purchase behaviour. This indicates that although customer segment may influence purchasing patterns to some extent, the variation within each segment is notable.
 
